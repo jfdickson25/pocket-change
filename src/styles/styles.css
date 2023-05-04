@@ -1,9 +1,13 @@
 /* a minimalist set of CSS resets */
+@import url('https://fonts.googleapis.com/css2?family=Sigmar&display=swap');
 
 /* default to border-box */
 html {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
   font-size: 16px;
+  background-color: #292b2c;
 }
 
 *, *:before, *:after {
@@ -13,13 +17,97 @@ html {
 /* adjust typography defaults */
 body {
   margin: 1rem;
-  font-family: sans-serif;
+  font-family: 'Sigmar', cursive;
   line-height: 1.5;
 }
 
-/* images and videos max out at full width */
-img,
-video {
-  height: auto;
-  max-width: 100%;
+button {
+  font-family: 'Sigmar', cursive;
+}
+
+input {
+  font-family: 'Sigmar', cursive;
+}
+
+#content {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(17, 1fr);
+  justify-content: center;
+  align-items: center;
+}
+
+#amount {
+  grid-column: 5/14;
+  font-size: 54pt;
+  color: white;
+  text-align: center;
+  margin-top: 10vh;
+  margin-bottom: 10vh;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+}
+
+button#add {
+  grid-column: 3/16;
+  height: 5vh;
+  width: 100%;
+  border-radius: 20px;
+  font-size: 16pt;
+  border: none;
+  background: #ffc107;
+  color: #292b2c;
+}
+
+#expense-input {
+  grid-column: 3/16;
+  width: 100%;
+  margin-top: 30px;
+}
+
+#expenses-list {
+  grid-column: 2/17;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  margin-top: 30px;
+  row-gap: 10px;
+}
+
+.expense {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: 100%;
+}
+
+.expense-amount {
+  text-align: right;
+}
+
+.expense-name {
+  font-size: 12pt;
+  text-align: center;
+  color: white;
+}
+
+#expense-name {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+}
+
+#expense-amount {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+}
+
+
+#add-expense {
+  width: 100%;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  height: 5vh;
 }
