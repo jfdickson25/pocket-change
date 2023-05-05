@@ -1,10 +1,21 @@
 import * as React from "react";
 
+const fashion = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/fashion.png?v=1683264925541";
+const book = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/book.png?v=1683264924773";
+const shirt = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/shirt.png?v=1683264977653";
+const gaming = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/gaming.png?v=1683264926675";
+const kitchen = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/kitchen.png?v=1683264927195";
+const gadget = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/gadget.png?v=1683264926366";
+const furniture = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/furniture.png?v=1683264925868";
+const bathroom = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/bathroom.png?v=1683264924414";
+const coin = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/coin.png?v=1683264925223";
+
 export default function Home() {
 
   const [amount, setAmount] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
   const [expenses, setExpenses] = React.useState([]);
+  const [active, setActive] = React.useState('book');
 
   React.useEffect(() => {
     // Check to see if there is a value in local storage
@@ -29,7 +40,16 @@ export default function Home() {
     if (expenses) {
       // Parse value to an array
       const expensesArr = JSON.parse(localStorage.getItem("expenses"));
+      // If there is no category for a given item in the expenses array, set it to book
+      for (let i = 0; i < expensesArr.length; i++) {
+        if (!expensesArr[i].category) {
+          expensesArr[i].category = "book";
+        }
+      }
+      // Set the expenses to the expenses array
       setExpenses(expensesArr);
+      // Set the value in local storage to the expenses array
+      localStorage.setItem("expenses", JSON.stringify(expensesArr));
     } else {
       // If there is no value, set the expenses to an empty array
       setExpenses([]);
@@ -96,6 +116,7 @@ export default function Home() {
       const newExpenses = [...expenses, {
         name: expenseName,
         amount: expenseAmount,
+        category: active,
         expense: true
       }];
       // Set the expenses to the new expenses array
@@ -112,6 +133,7 @@ export default function Home() {
       expenses.push({
         name: expenseName,
         amount: expenseAmount,
+        category: active,
         expense: true
       });
       localStorage.setItem("expenses", JSON.stringify(expenses));
@@ -120,6 +142,7 @@ export default function Home() {
       const expenses = [{
         name: expenseName,
         amount: expenseAmount,
+        category: active,
         expense: true
       }];
       localStorage.setItem("expenses", JSON.stringify(expenses));
@@ -129,6 +152,7 @@ export default function Home() {
     const newExpenses = [...expenses, {
       name: expenseName,
       amount: expenseAmount,
+      category: active,
       expense: true
     }];
 
@@ -156,6 +180,16 @@ export default function Home() {
           <>
             <div id="amount">${amount}</div>
             <button id="add" onClick={addOneHundred}>+100</button>
+            <div className="categories">
+              <img onClick={() => { setActive('book') }} style={ active === 'book' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={book} alt="book" />
+              <img onClick={() => { setActive('fashion') }} style={ active === 'fashion' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={fashion} alt="Fashion" />
+              <img onClick={() => { setActive('shirt') }} style={ active === 'shirt' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={shirt} alt="shirt" />
+              <img onClick={() => { setActive('gaming') }} style={ active === 'gaming' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={gaming} alt="gaming" />
+              <img onClick={() => { setActive('gadget') }} style={ active === 'gadget' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={gadget} alt="gadget" />
+              <img onClick={() => { setActive('bathroom') }} style={ active === 'bathroom' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={bathroom} alt="bathroom" />
+              <img onClick={() => { setActive('kitchen') }} style={ active === 'kitchen' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={kitchen} alt="kitchen" />
+              <img onClick={() => { setActive('furniture') }} style={ active === 'furniture' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={furniture} alt="furniture" />
+            </div>
             <div id="expense-input">
               <input type="text" id="expense-name" placeholder="Expense Name" />
               <input type="number" id="expense-amount" placeholder="Expense Amount" />
@@ -166,6 +200,7 @@ export default function Home() {
                 expenses.slice(0).reverse().map((expense, index) => {
                   return (
                     <div key={index} className="expense">
+                      <img className="expense-img" src={ expense.expense ? eval(expense.category) : coin} alt={expense.category} />
                       <div className="expense-name">{expense.name}</div>
                       <div className="expense-amount" style={ expense.expense ? {color: '#dc3545'} : {color: '#198754' }}>
                         {expense.expense ? "-" : "+"}
