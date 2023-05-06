@@ -1,4 +1,6 @@
 import * as React from "react";
+import confetti from "canvas-confetti";
+import { v4 as uuidv4 } from 'uuid';
 
 const fashion = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/fashion.png?v=1683264925541";
 const book = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/book.png?v=1683264924773";
@@ -9,6 +11,10 @@ const gadget = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/g
 const furniture = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/furniture.png?v=1683264925868";
 const bathroom = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/bathroom.png?v=1683264924414";
 const coin = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/coin.png?v=1683264925223";
+const edit = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/edit.png?v=1683380186211";
+const editActive = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/edit-active.png?v=1683380186525";
+const remove = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/close.png?v=1683382087375";
+const boardGame = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/board-game.png?v=1683383328006";
 
 export default function Home() {
 
@@ -16,6 +22,8 @@ export default function Home() {
   const [loading, setLoading] = React.useState(true);
   const [expenses, setExpenses] = React.useState([]);
   const [active, setActive] = React.useState('book');
+  const [editMode, setEditMode] = React.useState(false);
+  const [editCategoryId, setEditCategoryId] = React.useState(null);
 
   React.useEffect(() => {
     // Check to see if there is a value in local storage
@@ -40,12 +48,14 @@ export default function Home() {
     if (expenses) {
       // Parse value to an array
       const expensesArr = JSON.parse(localStorage.getItem("expenses"));
-      // If there is no category for a given item in the expenses array, set it to book
-      for (let i = 0; i < expensesArr.length; i++) {
-        if (!expensesArr[i].category) {
-          expensesArr[i].category = "book";
+
+      // If the expense doesn't have an ID set it to 
+      expensesArr.forEach((expense, index) => {
+        if (!expense.id) {
+          expensesArr[index].id = uuidv4();
         }
-      }
+      });
+
       // Set the expenses to the expenses array
       setExpenses(expensesArr);
       // Set the value in local storage to the expenses array
@@ -60,7 +70,7 @@ export default function Home() {
 
   const addOneHundred = () => {
     // Add 1 to the amount
-    const newAmount = amount + 100;
+    const newAmount = parseInt(amount) + 100;
     // Set the amount to the new amount
     setAmount(newAmount);
     // Set the value in local storage to the new amount
@@ -68,6 +78,7 @@ export default function Home() {
 
     // Add expense to the expenses array
     const newExpenses = [...expenses, {
+      id: uuidv4(),
       name: "Payday!",
       amount: 100,
       expense: false
@@ -77,6 +88,11 @@ export default function Home() {
     setExpenses(newExpenses);
     // Set the value in local storage to the new expenses array
     localStorage.setItem("expenses", JSON.stringify(newExpenses));
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
   }
 
   const addExpense = () => {
@@ -84,6 +100,7 @@ export default function Home() {
     const expenseName = document.getElementById("expense-name").value;
     // Get the expense amount
     const expenseAmount = document.getElementById("expense-amount").value;
+    const id = uuidv4();
 
     // Check to see if the expense name is not empty
     if (expenseName === "") {
@@ -114,6 +131,7 @@ export default function Home() {
       localStorage.setItem("amount", 0);
       // Add expense to the expenses array
       const newExpenses = [...expenses, {
+        id: id,
         name: expenseName,
         amount: expenseAmount,
         category: active,
@@ -121,8 +139,8 @@ export default function Home() {
       }];
       // Set the expenses to the new expenses array
       setExpenses(newExpenses);
-      // alert the user that they have no more money
-      alert("You have no more money.");
+      // Set the value in local storage to the new expenses array
+      localStorage.setItem("expenses", JSON.stringify(newExpenses));
       return;
     }
 
@@ -131,6 +149,7 @@ export default function Home() {
       // Add this expense to the localStorage object
       const expenses = JSON.parse(localStorage.getItem("expenses"));
       expenses.push({
+        id: id,
         name: expenseName,
         amount: expenseAmount,
         category: active,
@@ -140,6 +159,7 @@ export default function Home() {
     } else {
       // Create a localStorage object for expenses
       const expenses = [{
+        id: id,
         name: expenseName,
         amount: expenseAmount,
         category: active,
@@ -150,6 +170,7 @@ export default function Home() {
 
     // Add expense to the expenses array
     const newExpenses = [...expenses, {
+      id: id,
       name: expenseName,
       amount: expenseAmount,
       category: active,
@@ -171,6 +192,68 @@ export default function Home() {
     document.getElementById("expense-amount").value = "";
   }
 
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
+    setEditCategoryId(null);
+  }
+
+  const categoryHandler = (expense) => {
+    // Check expense is not an expense
+    if (expense.expense) {
+      // Set the active category to the category of the expense
+      setActive(expense.category);
+      // Set the edit category id to the id of the expense
+      setEditCategoryId(expense.id);
+    }
+  }
+
+  const categoryChangeHandler = (category) => {
+    // Set the active category to the category
+    setActive(category);
+
+    if(editActive !== null) {
+      // Set the category of the expense to the category
+      const newExpenses = expenses.map((expense) => {
+        if (expense.id === editCategoryId) {
+          expense.category = category;
+        }
+        return expense;
+      });
+
+      // Set the expenses to the new expenses array
+      setExpenses(newExpenses);
+      // Set the value in local storage to the new expenses array
+      localStorage.setItem("expenses", JSON.stringify(newExpenses));
+    }
+  }
+
+  const removeItemHandler = (id) => {
+    // Remove the expense from the expenses array
+    const newExpenses = expenses.filter((expenseItem) => {
+      if(expenseItem.id == id) {
+        let newAmount;
+        if(expenseItem.expense) {
+          newAmount = parseInt(amount) + parseInt(expenseItem.amount);
+        } else {
+          // Subtract the amount from the amount
+          newAmount = parseInt(amount) - parseInt(expenseItem.amount);
+        }
+
+        // Set the value in local storage to the new amount
+        localStorage.setItem("amount", newAmount);
+        // Set the amount to the new amount
+        setAmount(newAmount);
+
+      }
+      return expenseItem.id !== id;
+    });
+
+    // Set the value in local storage to the new expenses array
+    localStorage.setItem("expenses", JSON.stringify(newExpenses));
+    // Set the expenses to the new expenses array
+    setExpenses(newExpenses);
+  }
+
   return (
     <div id="content">
       {
@@ -178,34 +261,59 @@ export default function Home() {
         : 
         (
           <>
-            <div id="amount">${amount}</div>
+            <img src={editMode ? editActive : edit} id="edit" onClick={toggleEditMode} />
+            { 
+              editMode ? (
+                <input type="number" id="amount-input" value={amount} onChange={(e) => {
+                  // Convert value to an integer
+                  const amountInt = parseInt(e.target.value);
+                  setAmount(amountInt);
+                  localStorage.setItem("amount", amountInt);
+                }} />
+              ) : (<div id="amount">${amount}</div>)
+            }
             <button id="add" onClick={addOneHundred}>+100</button>
-            <div className="categories">
-              <img onClick={() => { setActive('book') }} style={ active === 'book' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={book} alt="book" />
-              <img onClick={() => { setActive('fashion') }} style={ active === 'fashion' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={fashion} alt="Fashion" />
-              <img onClick={() => { setActive('shirt') }} style={ active === 'shirt' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={shirt} alt="shirt" />
-              <img onClick={() => { setActive('gaming') }} style={ active === 'gaming' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={gaming} alt="gaming" />
-              <img onClick={() => { setActive('gadget') }} style={ active === 'gadget' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={gadget} alt="gadget" />
-              <img onClick={() => { setActive('bathroom') }} style={ active === 'bathroom' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={bathroom} alt="bathroom" />
-              <img onClick={() => { setActive('kitchen') }} style={ active === 'kitchen' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={kitchen} alt="kitchen" />
-              <img onClick={() => { setActive('furniture') }} style={ active === 'furniture' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={furniture} alt="furniture" />
-            </div>
             <div id="expense-input">
-              <input type="text" id="expense-name" placeholder="Expense Name" />
-              <input type="number" id="expense-amount" placeholder="Expense Amount" />
-              <button id="add-expense" onClick={addExpense}>Add Expense</button>
+              <input type="text" id="expense-name" placeholder="Item Name" />
+              <input type="number" id="expense-amount" placeholder="$" />
+              <button id="add-expense" onClick={addExpense}>Add</button>
+            </div>
+            <div className="categories">
+              <img onClick={() => { categoryChangeHandler('book') }} style={ active === 'book' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={book} alt="book" />
+              <img onClick={() => { categoryChangeHandler('fashion') }} style={ active === 'fashion' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={fashion} alt="Fashion" />
+              <img onClick={() => { categoryChangeHandler('shirt') }} style={ active === 'shirt' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={shirt} alt="shirt" />
+              <img onClick={() => { categoryChangeHandler('gaming') }} style={ active === 'gaming' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={gaming} alt="gaming" />
+              <img onClick={() => { categoryChangeHandler('gadget') }} style={ active === 'gadget' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={gadget} alt="gadget" />
+              <img onClick={() => { categoryChangeHandler('bathroom') }} style={ active === 'bathroom' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={bathroom} alt="bathroom" />
+              <img onClick={() => { categoryChangeHandler('kitchen') }} style={ active === 'kitchen' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={kitchen} alt="kitchen" />
+              <img onClick={() => { categoryChangeHandler('furniture') }} style={ active === 'furniture' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={furniture} alt="furniture" />
+              <img onClick={() => { categoryChangeHandler('boardGame') }} style={ active === 'boardGame' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={boardGame} alt="board game" />
             </div>
             <div id="expenses-list">
               {
                 expenses.slice(0).reverse().map((expense, index) => {
                   return (
                     <div key={index} className="expense">
-                      <img className="expense-img" src={ expense.expense ? eval(expense.category) : coin} alt={expense.category} />
+                      <img 
+                        className="expense-img" 
+                        src={ expense.expense ? eval(expense.category) : coin} 
+                        alt={expense.category} 
+                        onClick={editMode ? () => { categoryHandler(expense) } : undefined } 
+                        style={ editCategoryId === expense.id ? {borderBottom: 'solid 1px #ffc107'} : null}
+                      />
                       <div className="expense-name">{expense.name}</div>
-                      <div className="expense-amount" style={ expense.expense ? {color: '#dc3545'} : {color: '#198754' }}>
-                        {expense.expense ? "-" : "+"}
-                        ${expense.amount}
-                      </div>
+                      { editMode ? 
+                        (
+                          <img className="expense-remove" src={remove} onClick={() => { removeItemHandler(expense.id) } } /> 
+                        )
+                        :
+                        (
+                          <div className="expense-amount" style={ expense.expense ? {color: '#dc3545'} : {color: '#198754' }}>
+                            {expense.expense ? "-" : "+"}
+                            ${expense.amount}
+                          </div>
+                        ) 
+                      }
                     </div>
                   )
                 })
