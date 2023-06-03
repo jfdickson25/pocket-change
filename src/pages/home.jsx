@@ -123,26 +123,6 @@ export default function Home() {
       alert("Please enter a positive number for the expense amount.");
       return;
     }
-    // Check to see if the expense amount is greater than the amount
-    if (expenseAmount > amount) {
-      // set amount to 0
-      setAmount(0);
-      // set the value in local storage to 0
-      localStorage.setItem("amount", 0);
-      // Add expense to the expenses array
-      const newExpenses = [...expenses, {
-        id: id,
-        name: expenseName,
-        amount: expenseAmount,
-        category: active,
-        expense: true
-      }];
-      // Set the expenses to the new expenses array
-      setExpenses(newExpenses);
-      // Set the value in local storage to the new expenses array
-      localStorage.setItem("expenses", JSON.stringify(newExpenses));
-      return;
-    }
 
     // Check if there is a localStorage object for expenses
     if (localStorage.getItem("expenses")) {
