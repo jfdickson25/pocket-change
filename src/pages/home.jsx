@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const fashion = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/fashion.png?v=1683264925541";
 const book = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/book.png?v=1683264924773";
+const plant = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/plant.png?v=1686971984474";
 const shirt = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/shirt.png?v=1683264977653";
 const gaming = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/gaming.png?v=1683264926675";
 const kitchen = "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/kitchen.png?v=1683264927195";
@@ -32,8 +33,8 @@ export default function Home() {
 
     // If there is a value, set the amount to that value
     if (amount) {
-      // Pare value to an integer
-      const amountInt = parseInt(localStorage.getItem("amount"));
+      // Pare value to an float
+      const amountInt = parseFloat(localStorage.getItem("amount"));
       setAmount(amountInt);
       setLoading(false);
     } else {
@@ -54,6 +55,14 @@ export default function Home() {
         if (!expense.id) {
           expensesArr[index].id = uuidv4();
         }
+
+        if (!expense.date) {
+          let date = new Date();
+
+          // Create a string mm/dd/yyyy
+          let dateString = `${date.getMonth() + 1}/${date.getDate()}`;
+          expensesArr[index].date = dateString;
+        }
       });
 
       // Set the expenses to the expenses array
@@ -69,19 +78,24 @@ export default function Home() {
   }, []);
 
   const addOneHundred = () => {
-    // Add 1 to the amount
-    const newAmount = parseInt(amount) + 100;
+    // Add 100 to the amount
+    const newAmount = amount + 100;
     // Set the amount to the new amount
     setAmount(newAmount);
     // Set the value in local storage to the new amount
     localStorage.setItem("amount", newAmount);
+
+    let date = new Date();
+    // Create a string mm/dd/yyyy
+    let dateString = `${date.getMonth() + 1}/${date.getDate()}`;
 
     // Add expense to the expenses array
     const newExpenses = [...expenses, {
       id: uuidv4(),
       name: "Payday!",
       amount: 100,
-      expense: false
+      expense: false,
+      date: dateString
     }];
 
     // Set the expenses to the new expenses array
@@ -124,6 +138,10 @@ export default function Home() {
       return;
     }
 
+    let date = new Date();
+    // Create a string mm/dd/yyyy
+    let dateString = `${date.getMonth() + 1}/${date.getDate()}`;
+
     // Check if there is a localStorage object for expenses
     if (localStorage.getItem("expenses")) {
       // Add this expense to the localStorage object
@@ -133,7 +151,8 @@ export default function Home() {
         name: expenseName,
         amount: expenseAmount,
         category: active,
-        expense: true
+        expense: true,
+        date: dateString
       });
       localStorage.setItem("expenses", JSON.stringify(expenses));
     } else {
@@ -143,7 +162,8 @@ export default function Home() {
         name: expenseName,
         amount: expenseAmount,
         category: active,
-        expense: true
+        expense: true,
+        date: dateString
       }];
       localStorage.setItem("expenses", JSON.stringify(expenses));
     }
@@ -154,7 +174,8 @@ export default function Home() {
       name: expenseName,
       amount: expenseAmount,
       category: active,
-      expense: true
+      expense: true,
+      date: dateString
     }];
 
     // Set the expenses to the new expenses array
@@ -213,10 +234,10 @@ export default function Home() {
       if(expenseItem.id == id) {
         let newAmount;
         if(expenseItem.expense) {
-          newAmount = parseInt(amount) + parseInt(expenseItem.amount);
+          newAmount = amount + parseFloat(expenseItem.amount);
         } else {
           // Subtract the amount from the amount
-          newAmount = parseInt(amount) - parseInt(expenseItem.amount);
+          newAmount = amount - parseFloat(expenseItem.amount);
         }
 
         // Set the value in local storage to the new amount
@@ -245,12 +266,12 @@ export default function Home() {
             { 
               editMode ? (
                 <input type="number" id="amount-input" value={amount} onChange={(e) => {
-                  // Convert value to an integer
-                  const amountInt = parseInt(e.target.value);
+                  // Convert value to an float
+                  const amountInt = parseFloat(e.target.value);
                   setAmount(amountInt);
                   localStorage.setItem("amount", amountInt);
                 }} />
-              ) : (<div id="amount">${amount}</div>)
+              ) : (<div id="amount">${amount.toFixed(2)}</div>)
             }
             <button id="add" onClick={addOneHundred}>+100</button>
             <div id="expense-input">
@@ -260,6 +281,7 @@ export default function Home() {
             </div>
             <div className="categories">
               <img onClick={() => { categoryChangeHandler('book') }} style={ active === 'book' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={book} alt="book" />
+              <img onClick={() => { categoryChangeHandler('plant') }} style={ active === 'plant' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={plant} alt="plant" />
               <img onClick={() => { categoryChangeHandler('fashion') }} style={ active === 'fashion' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={fashion} alt="Fashion" />
               <img onClick={() => { categoryChangeHandler('shirt') }} style={ active === 'shirt' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={shirt} alt="shirt" />
               <img onClick={() => { categoryChangeHandler('gaming') }} style={ active === 'gaming' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={gaming} alt="gaming" />
@@ -294,6 +316,7 @@ export default function Home() {
                           </div>
                         ) 
                       }
+                      <div className="expense-date">{expense.date}</div>
                     </div>
                   )
                 })

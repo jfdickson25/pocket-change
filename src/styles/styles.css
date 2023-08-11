@@ -40,11 +40,11 @@ input {
 
 #amount {
   grid-column: 5/14;
-  font-size: 54pt;
+  font-size: 42pt;
   color: white;
   text-align: center;
   margin-top: 10vh;
-  margin-bottom: 10vh;
+  margin-bottom: 5vh;
   display: grid;
   align-items: center;
   justify-items: center;
@@ -108,18 +108,25 @@ button#add {
 
 .expense-amount {
   text-align: right;
-  grid-column: 11/13;
+  grid-column: 8/11;
 }
 
 .expense-remove {
-  grid-column: 12;
+  grid-column: 10;
   width: 70%;
 }
 
 .expense-name {
-  font-size: 11pt;
+  font-size: 10pt;
   color: white;
-  grid-column: 3/11;
+  grid-column: 3/8;
+}
+
+.expense-date {
+  grid-column: 11/13;
+  font-size: 8pt;
+  color: #ffc107;
+  text-align: right;
 }
 
 #expense-name {
@@ -127,9 +134,10 @@ button#add {
   border: none;
   border-radius: 0;
   font-size: 10pt;
-  grid-column: 1/9;
+  grid-column: 3/11;
   text-align: center;
   border: solid 1px #292b2c;
+  grid-row: 1/2;
 }
 
 #expense-amount {
@@ -137,9 +145,10 @@ button#add {
   border: none;
   border-radius: 0;
   font-size: 10pt;
-  grid-column: 9/11;
+  grid-column: 1/3;
   text-align: center;
   border: solid 1px #292b2c;
+  grid-row: 1/2;
 }
 
 
