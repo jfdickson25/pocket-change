@@ -77,9 +77,9 @@ export default function Home() {
     }
   }, []);
 
-  const addOneHundred = () => {
-    // Add 100 to the amount
-    const newAmount = amount + 100;
+  const addFifty = () => {
+    // Add 50 to the amount
+    const newAmount = amount + 50;
     // Set the amount to the new amount
     setAmount(newAmount);
     // Set the value in local storage to the new amount
@@ -93,7 +93,7 @@ export default function Home() {
     const newExpenses = [...expenses, {
       id: uuidv4(),
       name: "Payday!",
-      amount: 100,
+      amount: 50,
       expense: false,
       date: dateString
     }];
@@ -273,7 +273,7 @@ export default function Home() {
                 }} />
               ) : (<div id="amount">${amount.toFixed(2)}</div>)
             }
-            <button id="add" onClick={addOneHundred}>+100</button>
+            <button id="add" onClick={addFifty}>+50</button>
             <div id="expense-input">
               <input type="text" id="expense-name" placeholder="Item Name" />
               <input type="number" id="expense-amount" placeholder="$" />

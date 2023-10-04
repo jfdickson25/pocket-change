@@ -1,7 +1,7 @@
 {
-  "name": "glitch-blank-react",
+  "name": "pocket-change",
   "version": "0.0.2",
-  "description": "A simple React app built with Vite and React.",
+  "description": "An app to keep track of personal expenses.",
   "main": "server.js",
   "scripts": {
     "start": "vite",
@@ -23,7 +23,7 @@
     "not dead"
   ],
   "engines": {
-    "node": "14.x"
+    "node": "16.x"
   },
   "repository": {
     "url": "https://glitch.com/edit/#!/glitch-blank-react"

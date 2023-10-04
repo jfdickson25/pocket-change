@@ -51,7 +51,7 @@ input {
 }
 
 #amount-input {
-  grid-column: 5/14;
+  grid-column: 3/16;
   font-size: 54pt;
   color: white;
   text-align: center;
