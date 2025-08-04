@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.af2da24c.css",
-    "main.js": "/static/js/main.979f106c.js",
-    "index.html": "/index.html",
-    "main.af2da24c.css.map": "/static/css/main.af2da24c.css.map",
-    "main.979f106c.js.map": "/static/js/main.979f106c.js.map"
+    "main.css": "/pocket-change/static/css/main.af2da24c.css",
+    "main.js": "/pocket-change/static/js/main.979f106c.js",
+    "index.html": "/pocket-change/index.html",
+    "main.af2da24c.css.map": "/pocket-change/static/css/main.af2da24c.css.map",
+    "main.979f106c.js.map": "/pocket-change/static/js/main.979f106c.js.map"
   },
   "entrypoints": [
     "static/css/main.af2da24c.css",
