@@ -26,6 +26,7 @@ export default function Home() {
   const [editMode, setEditMode] = React.useState(false);
   const [editCategoryId, setEditCategoryId] = React.useState(null);
   const [incrementAmount, setIncrementAmount] = React.useState(0);
+  const [itemEditId, setItemEditId] = React.useState(null);
 
   React.useEffect(() => {
     // Check to see if there is a value in local storage
@@ -135,50 +136,73 @@ export default function Home() {
     const expenseName = document.getElementById("expense-name").value;
     // Get the expense amount
     const expenseAmount = document.getElementById("expense-amount").value;
-    const id = uuidv4();
 
-    // Check to see if the expense name is not empty
-    if (expenseName === "") {
-      alert("Please enter an expense name.");
-      return;
-    }
-    // Check to see if the expense amount is not empty
-    if (expenseAmount === "") {
-      alert("Please enter an expense amount.");
+    if(true === editMode && itemEditId === null) {
+      alert("Please select an expense to edit.");
+      // Set name and amount to empty strings
+      document.getElementById("expense-name").value = "";
+      document.getElementById("expense-amount").value = "";
+      setActive('book');
       return;
     }
 
-    // Check to see if the expense amount is a number
-    if (isNaN(expenseAmount)) {
-      alert("Please enter a number for the expense amount.");
-      return;
-    }
-    // Check to see if the expense amount is a positive number
-    if (expenseAmount < 0) {
-      alert("Please enter a positive number for the expense amount.");
-      return;
-    }
+    if (false === editMode && itemEditId === null) {
+      const id = uuidv4();
 
-    let date = new Date();
-    // Create a string mm/dd/yyyy
-    let dateString = `${date.getMonth() + 1}/${date.getDate()}`;
+      // Check to see if the expense name is not empty
+      if (expenseName === "") {
+        alert("Please enter an expense name.");
+        return;
+      }
+      // Check to see if the expense amount is not empty
+      if (expenseAmount === "") {
+        alert("Please enter an expense amount.");
+        return;
+      }
 
-    // Check if there is a localStorage object for expenses
-    if (localStorage.getItem("expenses")) {
-      // Add this expense to the localStorage object
-      const expenses = JSON.parse(localStorage.getItem("expenses"));
-      expenses.push({
-        id: id,
-        name: expenseName,
-        amount: expenseAmount,
-        category: active,
-        expense: true,
-        date: dateString
-      });
-      localStorage.setItem("expenses", JSON.stringify(expenses));
-    } else {
-      // Create a localStorage object for expenses
-      const expenses = [{
+      // Check to see if the expense amount is a number
+      if (isNaN(expenseAmount)) {
+        alert("Please enter a number for the expense amount.");
+        return;
+      }
+      // Check to see if the expense amount is a positive number
+      if (expenseAmount < 0) {
+        alert("Please enter a positive number for the expense amount.");
+        return;
+      }
+
+      let date = new Date();
+      // Create a string mm/dd/yyyy
+      let dateString = `${date.getMonth() + 1}/${date.getDate()}`;
+
+      // Check if there is a localStorage object for expenses
+      if (localStorage.getItem("expenses")) {
+        // Add this expense to the localStorage object
+        const expenses = JSON.parse(localStorage.getItem("expenses"));
+        expenses.push({
+          id: id,
+          name: expenseName,
+          amount: expenseAmount,
+          category: active,
+          expense: true,
+          date: dateString
+        });
+        localStorage.setItem("expenses", JSON.stringify(expenses));
+      } else {
+        // Create a localStorage object for expenses
+        const expenses = [{
+          id: id,
+          name: expenseName,
+          amount: expenseAmount,
+          category: active,
+          expense: true,
+          date: dateString
+        }];
+        localStorage.setItem("expenses", JSON.stringify(expenses));
+      }
+
+      // Add expense to the expenses array
+      const newExpenses = [...expenses, {
         id: id,
         name: expenseName,
         amount: expenseAmount,
@@ -186,37 +210,93 @@ export default function Home() {
         expense: true,
         date: dateString
       }];
-      localStorage.setItem("expenses", JSON.stringify(expenses));
+
+      // Set the expenses to the new expenses array
+      setExpenses(newExpenses);
+
+      // Subtract the expense amount from the amount
+      const newAmount = amount - expenseAmount;
+      // Set the amount to the new amount
+      setAmount(newAmount);
+      // Set the value in local storage to the new amount
+      localStorage.setItem("amount", newAmount);
+      // Clear the expense name
+      document.getElementById("expense-name").value = "";
+      // Clear the expense amount
+      document.getElementById("expense-amount").value = "";
+    } else if (editMode && itemEditId !== null) {
+        // Check to see if the expense name is not empty
+        if (expenseName === "") {
+          alert("Please enter an expense name.");
+          return;
+        }
+        // Check to see if the expense amount is not empty
+        if (expenseAmount === "") {
+          alert("Please enter an expense amount.");
+          return;
+        }
+        // Check to see if the expense amount is a number
+        if (isNaN(expenseAmount)) {
+          alert("Please enter a number for the expense amount.");
+          return;
+        }
+        // Check to see if the expense amount is a positive number
+        if (expenseAmount < 0) {
+          alert("Please enter a positive number for the expense amount.");
+          return;
+        }
+        // Find the expense in the expenses array
+        const expense = expenses.find((expenseItem) => expenseItem.id === itemEditId);
+        if (expense) {
+          let newAmount;
+          if (expenseAmount > expense.amount) {
+            newAmount = amount - (expenseAmount - parseFloat(expense.amount));
+            // Set local storage to the new amount
+            localStorage.setItem("amount", newAmount);
+          } else {
+            newAmount = amount + (parseFloat(expense.amount) - expenseAmount);
+            // Set local storage to the new amount
+            localStorage.setItem("amount", newAmount);
+          }
+
+          setAmount(newAmount);
+
+          // Update the expense in the expenses array
+          const newExpenses = expenses.map((expenseItem) => {
+            if (expenseItem.id === itemEditId) {
+              expenseItem.name = expenseName;
+              expenseItem.amount = expenseAmount;
+              expenseItem.category = active;
+              expenseItem.expense = true;
+            }
+            return expenseItem;
+          });
+
+          // Set the expenses to the new expenses array
+          setExpenses(newExpenses);
+          // Set the value in local storage to the new expenses array
+          localStorage.setItem("expenses", JSON.stringify(newExpenses));
+
+          // Clear the input fields
+          document.getElementById("expense-name").value = "";
+          document.getElementById("expense-amount").value = "";
+          // Clear the item edit id
+          setItemEditId(null);
+        }
     }
-
-    // Add expense to the expenses array
-    const newExpenses = [...expenses, {
-      id: id,
-      name: expenseName,
-      amount: expenseAmount,
-      category: active,
-      expense: true,
-      date: dateString
-    }];
-
-    // Set the expenses to the new expenses array
-    setExpenses(newExpenses);
-
-    // Subtract the expense amount from the amount
-    const newAmount = amount - expenseAmount;
-    // Set the amount to the new amount
-    setAmount(newAmount);
-    // Set the value in local storage to the new amount
-    localStorage.setItem("amount", newAmount);
-    // Clear the expense name
-    document.getElementById("expense-name").value = "";
-    // Clear the expense amount
-    document.getElementById("expense-amount").value = "";
   }
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
     setEditCategoryId(null);
+
+    // Clear the input fields
+    document.getElementById("expense-name").value = "";
+    document.getElementById("expense-amount").value = "";
+    // Clear the item edit id
+    setItemEditId(null);
+    // If we are not in edit mode, clear the active category
+    setActive('book');
   }
 
   const categoryHandler = (expense) => {
@@ -276,6 +356,28 @@ export default function Home() {
     setExpenses(newExpenses);
   }
 
+  const changeItemHandler = (id) => {
+    // check if we are in edit mode
+    if (editMode) {
+      // Find the expense in the expenses array and change it to be an input
+      const expense = expenses.find((expenseItem) => expenseItem.id === id);
+      if (expense) {
+        // Change the expense name to an input
+        const expenseNameInput = document.getElementById("expense-name");
+        expenseNameInput.value = expense.name;
+        // Change the expense amount to an input
+        const expenseAmountInput = document.getElementById("expense-amount");
+        expenseAmountInput.value = expense.amount;
+        // Set the active category to the category of the expense
+        setActive(expense.category);
+        // Set the edit category id to the id of the expense
+        setEditCategoryId(expense.id);
+        // Set the item edit id to the id of the expense
+        setItemEditId(expense.id);
+      }
+    }
+  }
+
   return (
     <div id="content">
       {
@@ -307,7 +409,9 @@ export default function Home() {
             <div id="expense-input">
               <input type="text" id="expense-name" placeholder="Item Name" />
               <input type="number" id="expense-amount" placeholder="$" />
-              <button id="add-expense" onClick={addExpense}>Add</button>
+              <button id="add-expense" onClick={addExpense}>
+                { editMode ? "Edit" : "Add" }
+              </button>
             </div>
             <div className="categories">
               <img onClick={() => { categoryChangeHandler('book') }} style={ active === 'book' ? {backgroundColor: '#ffc107'} : null } className="category-img" src={book} alt="book" />
@@ -326,15 +430,18 @@ export default function Home() {
                 expenses.slice(0).reverse().map((expense, index) => {
                   return (
                     <React.Fragment key={index}>
-                      <div className="expense">
+                      <div className="expense"
+                        style={ editCategoryId === expense.id ? {borderBottom: 'solid 1px #ffc107'} : null}
+                        onClick={editMode ? () => { changeItemHandler(expense.id) } : undefined }
+                      >
                         <img 
                           className="expense-img" 
                           src={ expense.expense ? eval(expense.category) : coin} 
-                          alt={expense.category} 
-                          onClick={editMode ? () => { categoryHandler(expense) } : undefined } 
-                          style={ editCategoryId === expense.id ? {borderBottom: 'solid 1px #ffc107'} : null}
+                          alt={expense.category}
                         />
-                        <div className="expense-name">{expense.name}</div>
+                        <div className="expense-name">
+                            {expense.name}
+                        </div>
                         { editMode ? 
                           (
                             <img className="expense-remove" src={remove} onClick={() => { removeItemHandler(expense.id) } } /> 
