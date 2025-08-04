@@ -25,11 +25,13 @@ export default function Home() {
   const [active, setActive] = React.useState('book');
   const [editMode, setEditMode] = React.useState(false);
   const [editCategoryId, setEditCategoryId] = React.useState(null);
+  const [incrementAmount, setIncrementAmount] = React.useState(0);
 
   React.useEffect(() => {
     // Check to see if there is a value in local storage
     const amount = localStorage.getItem("amount");
     const expenses = localStorage.getItem("expenses");
+    const incrementAmount = localStorage.getItem("incrementAmount");
 
     // If there is a value, set the amount to that value
     if (amount) {
@@ -63,6 +65,13 @@ export default function Home() {
           let dateString = `${date.getMonth() + 1}/${date.getDate()}`;
           expensesArr[index].date = dateString;
         }
+
+        if (index !== 0) {
+          // Check if there was a month change from the last expense
+          if(expense.date.split('/')[0] !== expensesArr[index - 1].date.split('/')[0]) {
+            expensesArr[index].dateChange = true;
+          }
+        }
       });
 
       // Set the expenses to the expenses array
@@ -75,11 +84,23 @@ export default function Home() {
       // Set the value in local storage to an empty array
       localStorage.setItem("expenses", JSON.stringify([]));
     }
+
+    // If there is a value, set the increment amount to that value
+    if (incrementAmount) {
+      // Parse value to an float
+      const incrementAmountInt = parseFloat(localStorage.getItem("incrementAmount"));
+      setIncrementAmount(incrementAmountInt);
+    } else {
+      // If there is no value, set the increment amount to 0
+      setIncrementAmount(50);
+      // Set the value in local storage to 0
+      localStorage.setItem("incrementAmount", 50);
+    }
   }, []);
 
-  const addFifty = () => {
+  const addIncrement = () => {
     // Add 50 to the amount
-    const newAmount = amount + 50;
+    const newAmount = amount + incrementAmount;
     // Set the amount to the new amount
     setAmount(newAmount);
     // Set the value in local storage to the new amount
@@ -93,7 +114,7 @@ export default function Home() {
     const newExpenses = [...expenses, {
       id: uuidv4(),
       name: "Payday!",
-      amount: 50,
+      amount: incrementAmount,
       expense: false,
       date: dateString
     }];
@@ -265,7 +286,7 @@ export default function Home() {
             <img src={editMode ? editActive : edit} id="edit" onClick={toggleEditMode} />
             { 
               editMode ? (
-                <input type="number" id="amount-input" value={amount} onChange={(e) => {
+                <input type="number" id="amount-input" value={amount.toFixed(2)} onChange={(e) => {
                   // Convert value to an float
                   const amountInt = parseFloat(e.target.value);
                   setAmount(amountInt);
@@ -273,7 +294,16 @@ export default function Home() {
                 }} />
               ) : (<div id="amount">${amount.toFixed(2)}</div>)
             }
-            <button id="add" onClick={addFifty}>+50</button>
+            {
+              editMode ? (
+                <input type="number" id="increment-amount-input" value={incrementAmount} onChange={(e) => {
+                  // Convert value to an float
+                  const incrementAmountInt = parseFloat(e.target.value);
+                  setIncrementAmount(incrementAmountInt);
+                  localStorage.setItem("incrementAmount", incrementAmountInt);
+                }} />
+              ) : (<button id="add" onClick={addIncrement}>+{incrementAmount}</button>)
+            }
             <div id="expense-input">
               <input type="text" id="expense-name" placeholder="Item Name" />
               <input type="number" id="expense-amount" placeholder="$" />
@@ -295,29 +325,32 @@ export default function Home() {
               {
                 expenses.slice(0).reverse().map((expense, index) => {
                   return (
-                    <div key={index} className="expense">
-                      <img 
-                        className="expense-img" 
-                        src={ expense.expense ? eval(expense.category) : coin} 
-                        alt={expense.category} 
-                        onClick={editMode ? () => { categoryHandler(expense) } : undefined } 
-                        style={ editCategoryId === expense.id ? {borderBottom: 'solid 1px #ffc107'} : null}
-                      />
-                      <div className="expense-name">{expense.name}</div>
-                      { editMode ? 
-                        (
-                          <img className="expense-remove" src={remove} onClick={() => { removeItemHandler(expense.id) } } /> 
-                        )
-                        :
-                        (
-                          <div className="expense-amount" style={ expense.expense ? {color: '#dc3545'} : {color: '#198754' }}>
-                            {expense.expense ? "-" : "+"}
-                            ${expense.amount}
-                          </div>
-                        ) 
-                      }
-                      <div className="expense-date">{expense.date}</div>
-                    </div>
+                    <React.Fragment key={index}>
+                      <div className="expense">
+                        <img 
+                          className="expense-img" 
+                          src={ expense.expense ? eval(expense.category) : coin} 
+                          alt={expense.category} 
+                          onClick={editMode ? () => { categoryHandler(expense) } : undefined } 
+                          style={ editCategoryId === expense.id ? {borderBottom: 'solid 1px #ffc107'} : null}
+                        />
+                        <div className="expense-name">{expense.name}</div>
+                        { editMode ? 
+                          (
+                            <img className="expense-remove" src={remove} onClick={() => { removeItemHandler(expense.id) } } /> 
+                          )
+                          :
+                          (
+                            <div className="expense-amount" style={ expense.expense ? {color: '#dc3545'} : {color: '#198754' }}>
+                              {expense.expense ? "-" : "+"}
+                              ${expense.amount}
+                            </div>
+                          ) 
+                        }
+                        <div className="expense-date">{expense.date}</div>
+                      </div>
+                      { expense.dateChange ? <div className="month-divider"></div> : null }
+                    </React.Fragment>
                   )
                 })
               }

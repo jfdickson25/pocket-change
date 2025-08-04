@@ -20,6 +20,15 @@ body {
   font-family: 'Sigmar', cursive;
   line-height: 1.5;
   margin: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  justify-items: center;
+  align-items: center;
+}
+
+#root {
+  max-width: 600px;
 }
 
 button {
@@ -57,6 +66,19 @@ input {
   text-align: center;
   margin-top: 10vh;
   margin-bottom: 10vh;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  background-color: #292b2c;
+  border: 2px solid #ffc107;
+  border-radius: 20px;
+}
+
+#increment-amount-input {
+  grid-column: 3/16;
+  font-size: 24pt;
+  color: white;
+  text-align: center;
   display: grid;
   align-items: center;
   justify-items: center;
@@ -127,6 +149,13 @@ button#add {
   font-size: 8pt;
   color: #ffc107;
   text-align: right;
+}
+
+.month-divider {
+  border: solid 1px #ffc107;;
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 #expense-name {

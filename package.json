@@ -4,31 +4,31 @@
   "description": "An app to keep track of personal expenses.",
   "main": "server.js",
   "scripts": {
-    "start": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "^3.1.0",
     "canvas-confetti": "^1.6.0",
+    "gh-pages": "^6.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-scripts": "^5.0.1",
     "uuid": "^9.0.0"
   },
-  "devDependencies": {
-    "vite": "^4.0.0"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead"
-  ],
-  "engines": {
-    "node": "16.x"
-  },
-  "repository": {
-    "url": "https://glitch.com/edit/#!/glitch-blank-react"
-  },
-  "glitch": {
-    "projectType": "generated_static"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
