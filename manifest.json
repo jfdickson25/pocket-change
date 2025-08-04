@@ -1,0 +1,47 @@
+{
+  "short_name": "Pocket Change",
+  "name": "Pocket Change",
+  "description": "An app to keep track of personal expenses.",
+  "start_url": "/pocket-change/",
+  "display": "standalone",
+  "theme_color": "#292b2c",
+  "background_color": "#292b2c",
+  "icons": [
+    {
+      "src": "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/pocket-change.png?v=1683172689772",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/pocket-change.png?v=1683172689772",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/pocket-change.png?v=1683172689772",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/pocket-change.png?v=1683172689772",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/pocket-change.png?v=1683172689772",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/pocket-change.png?v=1683172689772",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn.glitch.global/41b7f33a-06f1-410f-8174-9b6b9cbc6c5d/pocket-change.png?v=1683172689772",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "orientation": "portrait"
+}
