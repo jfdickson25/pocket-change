@@ -2,8 +2,8 @@
   "name": "pocket-change",
   "version": "0.0.2",
   "description": "An app to keep track of personal expenses.",
-  "main": "server.js",
-  "scripts": {
+  "homepage": "https://jordandickson.github.io/pocket-change/",
+    "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
