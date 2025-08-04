@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "description": "An app to keep track of personal expenses.",
   "homepage": "https://jordandickson.github.io/pocket-change/",
-    "scripts": {
+  "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
